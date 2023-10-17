@@ -1,0 +1,51 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+      "aspnameneu": {
+          "type": "string"
+      },
+      "tstwebapp001": {
+          "type": "string"
+      }
+  },
+  "functions": [],
+  "variables": {},
+  "resources": [
+    {
+      "name": "[parameters('aspnameneu')]",
+      "type": "Microsoft.Web/serverfarms",
+      "apiVersion": "2018-02-01",
+      "location": "[resourceGroup().location]",
+      "sku": {
+        "name": "F1",
+        "capacity": 1
+      },
+      "tags": {
+        "displayName": "[parameters('aspnameneu')]"
+      },
+      "properties": {
+        "name": "[parameters('aspnameneu')]"
+      }
+    },
+
+    {
+      "name": "[parameters('tstwebapp001')]",
+      "type": "Microsoft.Web/sites",
+      "apiVersion": "2018-11-01",
+      "location": "[resourceGroup().location]",
+      "tags": {
+        "[concat('hidden-related:', resourceGroup().id, '/providers/Microsoft.Web/serverfarms/', parameters('aspnameneu'))]": "Resource",
+        "displayName": "[parameters('tstwebapp001')]"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/serverfarms', parameters('aspnameneu'))]"
+      ],
+      "properties": {
+        "name": "[parameters('tstwebapp001')]",
+        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('aspnameneu'))]"
+      }
+    }
+  ],
+  "outputs": {}
+}

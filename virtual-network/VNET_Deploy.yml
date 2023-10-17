@@ -1,0 +1,30 @@
+trigger:
+- none
+
+pool: VMSS Self-Hosted
+  # vmImage: ubuntu-latest
+
+variables:
+- name: subscriptionId
+  value: 8f54c9d1-875d-4c30-b468-ad3690c17068
+- name: resourceGroupName
+  value: rg-ukw-JosuedaSilva
+- name: location
+  value: UK West
+
+
+steps:
+- task: AzureResourceManagerTemplateDeployment@3
+  inputs:
+    deploymentScope: 'Resource Group'
+    azureResourceManagerConnection: 'MBG EMEA'
+    subscriptionId: $(subscriptionId)
+    action: 'Create Or Update Resource Group'
+    resourceGroupName: $(resourceGroupName)
+    location: $(location)
+    templateLocation: 'Linked artifact'
+    csmFile: '$(System.DefaultWorkingDirectory)/test_deployments/VNetDeploy.json'
+    csmParametersFile: '$(System.DefaultWorkingDirectory)/test_deployments/VNetDeploy.parameters.json'
+    deploymentMode: 'Incremental'
+
+

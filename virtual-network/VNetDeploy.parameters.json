@@ -1,0 +1,40 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "hubvnetname": {
+            "value": "jsneu-hub-dev-vnet" 
+        },
+        "spoke1vnetname": {
+            "value": "jsweu-strgbckend-dev-vnet"
+        },
+        "spoke2vnetname": {
+            "value": "jsweu-frntendwa-dev-vnet" 
+        },
+        "spoke1vm1snet": {
+            "value": "vm1strgsubnet"
+            },
+        "spoke1vm2snet": {
+            "value": "vm2strgsubnet"
+        },
+        "spoke2vm3snet": {
+            "value": "vmwasubnet"
+        },
+        "stoaccsnet": {
+            "value": "spk2-dev-bckendsa"
+        },
+        "rt1name": {
+            "value": "rt1-weu-jds" 
+        }, 
+        "spk2spkrtname": {
+            "value": "defaultroute" 
+        },
+        "nsgname": {
+            "value": "nsg-weu-tstbckend" 
+        },
+        "location": {
+            "value": "westeurope" 
+        }
+    }
+}
+        

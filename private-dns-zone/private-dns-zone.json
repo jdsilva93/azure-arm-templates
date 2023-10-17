@@ -1,0 +1,48 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "privateDnsZoneName": {
+            "type": "array"
+        },
+        "dnsRecords": {
+            "type": "array"
+        },
+        "location": {
+            "type": "String"
+        }
+    },
+    "functions": [],
+    "variables": {},
+    "resources": [
+        {
+            "type": "Microsoft.Network/privateDnsZones",
+            "apiVersion": "2018-09-01",
+            "name": "[parameters('privateDnsZoneName')[copyIndex()]]",
+            "copy":
+                {
+                    "name": "privatednscopy",
+                    "count": "[length(parameters('privateDnsZoneName'))]"
+                },
+            "location": "[parameters('location')]",
+            "dependsOn": [],
+            "tags": {},
+            "properties": {
+                "copy":
+                [
+                    {
+                        "name": "records",
+                        "count": "[length(parameters('dnsRecords'))]" 
+                    }
+                ],
+                "TTL": 3600,
+                "Arecords": [
+                    {
+                        "ipv4Address": "[parameters('dnsRecords')[copyIndex()]]"
+                    }
+                ]
+            }
+        }
+    ],
+    "outputs": {}
+}

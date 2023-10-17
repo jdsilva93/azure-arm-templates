@@ -1,0 +1,17 @@
+az login --tenant 47af30ab-082e-4ac3-9d2a-adfd52da88ec
+
+az account set --subscription 34ddcb84-9987-4faf-9960-e5742853cb94
+
+az network private-dns zone export --name privatelink.josue.test02.net --resource-group rg-uks-JosuedaSilva -f test.txt
+
+az account set --subscription aa4f27b9-9a05-44e0-a90f-98bdaafc92a9
+
+az network private-dns zone import --name privatelink.josue.test04.net --resource-group rg-ukw-JosuedaSilva -f test.txt
+
+
+
+$dns_zones = (az vm list --resource-group VMResources --show-details --query "[?powerState=='VM running'].id" --output tsv)
+foreach ($dns_zone in $dns_zones) {
+    Write-Output "Stopping $vm_id"
+    az vm stop --ids $vm_id
+}
