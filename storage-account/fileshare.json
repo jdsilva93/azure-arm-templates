@@ -1,0 +1,105 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "location": {
+            "type": "string"
+        },
+        "strgaccname": {
+            "type": "string"
+        },
+        "strgacckind": {
+            "type": "string"
+        },
+        "strgaccsku": {
+            "type": "string"
+        },
+        "strgaccskutier": {
+            "type": "string"
+        },
+        "filesharename": {
+            "type": "string"
+        },
+        "pepname": {
+            "type": "string"
+        },
+        "shareQuota": {
+            "type": "string"
+        },
+        "pepvnet": {
+            "type": "string"
+        },
+        "pepsubnet": {
+            "type": "string"
+        }
+    },
+    "functions": [],
+    "variables": {},
+    "resources": [
+        {
+            "name": "[parameters('strgaccname')]",
+            "type": "Microsoft.Storage/storageAccounts",
+            "apiVersion": "2021-04-01",
+            "location": "[parameters('location')]",
+            "kind": "[parameters('strgacckind')]",
+            "sku": {
+                "name": "[parameters('strgaccsku')]",
+                "tier": "[parameters('strgaccskutier')]"
+            },
+            "properties":{
+                "minimumTlsVersion": "TLS1_2",
+                "supportsHttpsTrafficOnly": true,
+                "encryption": {
+                    "services": {
+                        "file": {
+                            "keyType": "Account",
+                            "enabled": true
+                        }
+                    },
+                    "keySource": "Microsoft.Storage"
+                }
+                
+            }
+            
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts/fileServices/shares",
+            "apiVersion": "2021-01-01",
+            "name": "[concat(parameters('strgaccname'), '/default/', parameters('filesharename'))]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts', parameters('strgaccname'))]"
+            ],
+            "properties": {
+                "accessTier": "Hot",
+                "shareQuota": "[parameters('shareQuota')]"
+            }
+        },
+        {
+            "type": "Microsoft.Network/privateEndpoints",
+            "apiVersion": "2019-04-01",
+            "name": "[parameters('pepname')]",
+            "location": "[parameters('location')]",
+            "properties": {
+                "privateLinkServiceConnections": [
+                    {
+                        "name": "[parameters('pepname')]",
+                        "properties": {
+                            "privateLinkServiceId": "[resourceId('Microsoft.Storage/storageAccounts', parameters('strgaccname'))]",
+                            "groupIds": [ "file" ],
+                            "privateLinkServiceConnectionState": {
+                                "status": "Approved",
+                                "description": "Auto-Approved",
+                                "actionsRequired": "None"
+                            }
+                        }
+
+                    }
+                ],
+                "subnet": {
+                    "id": "[resourceId('rg-pk-dev-vnet-01', 'Microsoft.Network/virtualNetworks/Subnets', parameters('pepvnet'),parameters('pepsubnet'))]"
+                }
+            }
+        }
+    ],
+    "outputs": {}
+}

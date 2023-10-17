@@ -1,0 +1,35 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "resource-group-name": {
+            "type": "string",
+            "defaultValue": "RG-EUS2-U-BASWARE-ROLLOUT",
+            "metadata": {
+                "description": "Name of the resource group"
+            }
+        },
+        "location": {
+            "type": "string",
+            "defaultValue": "eastus2",
+            "metadata": {
+                "description": "Location of the resource group"
+            }
+        }
+    },
+    "functions": [],
+    "variables": {},
+    "resources": [
+        {
+            "name": "[parameters('resource-group-name')]",
+            "type": "Microsoft.Resources/resourceGroups",
+            "apiVersion": "2021-04-01",
+            "location": "[parameters('location')]",
+            "dependsOn": [],
+            "tags": {
+
+            }
+        }
+    ],
+    "outputs": {}
+}

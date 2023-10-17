@@ -1,0 +1,593 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "vm1vnet": {
+      "type": "string"
+    },
+    "vm1subnet": {
+      "type": "string"
+    },
+    "vm1strgname": {
+      "type": "string"
+    },
+    "vm1-pip": {
+      "type": "string"
+    },
+    "vm1-nsg": {
+      "type": "string"
+    },
+    "vm1-nic": {
+      "type": "string"
+    },
+    "vm1name": {
+      "type": "string"
+    },
+    "vm1usrnm": {
+      "type": "securestring"
+    },
+    "vm1pswrd": {
+      "type": "securestring"
+    },
+    "vm1osdiskname": {
+      "type": "string"
+    },
+    "vm2vnet": {
+      "type": "string"
+    },
+    "vm2subnet": {
+      "type": "string"
+    },
+    "vm2strgname": {
+      "type": "string"
+    },
+    "vm2-pip": {
+      "type": "string"
+    },
+    "vm2-nsg": {
+      "type": "string"
+    },
+    "vm2-nic": {
+      "type": "string"
+    },
+    "vm2name": {
+      "type": "string"
+    },
+    "vm2usrnm": {
+      "type": "securestring"
+    },
+    "vm2pswrd": {
+      "type": "securestring"
+    },
+    "vm2osdiskname": {
+      "type": "string"
+    },
+    "hubfirewallname": {
+      "type": "string"
+    },
+    "firewallpipname": {
+      "type": "string"
+    },
+    "firewallPolicyname": {
+      "type": "string"
+    },
+    "hubvnetname": {
+      "type": "string"
+    }
+  },
+  "functions": [],
+  "variables": {},
+  "resources": [
+    {
+      "name": "[parameters('vm1strgname')]",
+      "type": "Microsoft.Storage/storageAccounts",
+      "apiVersion": "2019-06-01",
+      "location": "[resourceGroup().location]",
+      "tags": {
+        "displayName": "[parameters('vm1strgname')]"
+      },
+      "sku": {
+        "name": "Standard_LRS"
+      },
+      "kind": "Storage"
+    },
+    {
+      "name": "[parameters('vm1-pip')]",
+      "type": "Microsoft.Network/publicIPAddresses",
+      "apiVersion": "2019-11-01",
+      "location": "[resourceGroup().location]",
+      "tags": {
+        "displayName": "[parameters('vm1-pip')]"
+      },
+      "properties": {
+        "publicIPAllocationMethod": "Static"
+      }
+    },
+    {
+      "name": "[parameters('vm1-nsg')]",
+      "type": "Microsoft.Network/networkSecurityGroups",
+      "apiVersion": "2018-08-01",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "securityRules": [
+          {
+            "name": "nsgRule1",
+            "properties": {
+              "description": "description",
+              "protocol": "Tcp",
+              "sourcePortRange": "*",
+              "destinationPortRange": "3389",
+              "sourceAddressPrefix": "*",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 100,
+              "direction": "Inbound"
+            }
+          },
+          {
+            "name": "Keyvault_access",
+            "properties": {
+              "protocol": "*",
+              "sourcePortRange": "*",
+              "destinationPortRange": "*",
+              "sourceAddressPrefix": "VirtualNetwork",
+              "destinationAddressPrefix": "AzureKeyVault",
+              "access": "Allow",
+              "priority": 100,
+              "direction": "Outbound",
+              "sourcePortRanges": [],
+              "destinationPortRanges": [],
+              "sourceAddressPrefixes": [],
+              "destinationAddressPrefixes": []
+            }
+          }
+        ]
+      }
+    },
+
+    {
+      "name": "[parameters('vm1-nic')]",
+      "type": "Microsoft.Network/networkInterfaces",
+      "apiVersion": "2019-11-01",
+      "location": "[resourceGroup().location]",
+
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/publicIPAddresses', parameters('vm1-pip'))]"
+      ],
+
+      "tags": {
+        "displayName": "[parameters('vm1-nic')]"
+      },
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "ipConfig1",
+            "properties": {
+              "privateIPAllocationMethod": "Dynamic",
+              "publicIPAddress": {
+                "id": "[resourceId('Microsoft.Network/publicIPAddresses', parameters('vm1-pip'))]"
+              },
+
+              "subnet": {
+                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vm1vnet'), parameters('vm1subnet'))]"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "[parameters('vm1name')]",
+      "type": "Microsoft.Compute/virtualMachines",
+      "apiVersion": "2019-07-01",
+      "location": "[resourceGroup().location]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Storage/storageAccounts', parameters('vm1strgname'))]",
+        "[resourceId('Microsoft.Network/networkInterfaces', parameters('vm1-nic'))]"
+      ],
+      "tags": {
+        "displayName": "[parameters('vm1name')]"
+      },
+      "properties": {
+        "hardwareProfile": {
+          "vmSize": "Standard_B2s"
+        },
+        "osProfile": {
+          "computerName": "[parameters('vm1name')]",
+          "adminUsername": "[parameters('vm1usrnm')]",
+          "adminPassword": "[parameters('vm1pswrd')]",
+          "windowsConfiguration": {
+            "provisionVMAgent": true,
+            "enableAutomaticUpdates": true
+          }
+        },
+
+        "storageProfile": {
+          "imageReference": {
+            "publisher": "MicrosoftWindowsServer",
+            "offer": "WindowsServer",
+            "sku": "2019-Datacenter",
+            "version": "latest"
+          },
+          "osDisk": {
+            "name": "[parameters('vm1osdiskname')]",
+            "caching": "ReadWrite",
+            "createOption": "FromImage"
+          }
+        },
+        "networkProfile": {
+          "networkInterfaces": [
+            {
+              "id": "[resourceId('Microsoft.Network/networkInterfaces', parameters('vm1-nic'))]"
+            }
+          ]
+        },
+        "diagnosticsProfile": {
+          "bootDiagnostics": {
+            "enabled": true,
+            "storageUri": "[reference(resourceId('Microsoft.Storage/storageAccounts/', parameters('vm1strgname'))).primaryEndpoints.blob]"
+          }
+        }
+      }
+    },
+
+    {
+      "name": "[parameters('vm2strgname')]",
+      "type": "Microsoft.Storage/storageAccounts",
+      "apiVersion": "2019-06-01",
+      "location": "[resourceGroup().location]",
+      "tags": {
+        "displayName": "[parameters('vm2strgname')]"
+      },
+      "sku": {
+        "name": "Standard_LRS"
+      },
+      "kind": "Storage"
+    },
+    {
+      "name": "[parameters('vm2-pip')]",
+      "type": "Microsoft.Network/publicIPAddresses",
+      "apiVersion": "2019-11-01",
+      "location": "[resourceGroup().location]",
+      "tags": {
+        "displayName": "[parameters('vm2-pip')]"
+      },
+      "properties": {
+        "publicIPAllocationMethod": "Static"
+      }
+    },
+    {
+      "name": "[parameters('vm2-nsg')]",
+      "type": "Microsoft.Network/networkSecurityGroups",
+      "apiVersion": "2018-08-01",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "securityRules": [
+          {
+            "name": "nsgRule1",
+            "properties": {
+              "description": "description",
+              "protocol": "Tcp",
+              "sourcePortRange": "*",
+              "destinationPortRange": "3389",
+              "sourceAddressPrefix": "*",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 100,
+              "direction": "Inbound"
+            }
+          }
+        ]
+      }
+    },
+
+    {
+      "name": "[parameters('vm2-nic')]",
+      "type": "Microsoft.Network/networkInterfaces",
+      "apiVersion": "2019-11-01",
+      "location": "[resourceGroup().location]",
+
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/publicIPAddresses', parameters('vm2-pip'))]"
+      ],
+
+      "tags": {
+        "displayName": "[parameters('vm2-nic')]"
+      },
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "ipConfig1",
+            "properties": {
+              "privateIPAllocationMethod": "Dynamic",
+              "publicIPAddress": {
+                "id": "[resourceId('Microsoft.Network/publicIPAddresses', parameters('vm2-pip'))]"
+              },
+
+              "subnet": {
+                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vm2vnet'), parameters('vm2subnet'))]"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "[parameters('vm2name')]",
+      "type": "Microsoft.Compute/virtualMachines",
+      "apiVersion": "2019-07-01",
+      "location": "[resourceGroup().location]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Storage/storageAccounts', parameters('vm2strgname'))]",
+        "[resourceId('Microsoft.Network/networkInterfaces', parameters('vm2-nic'))]"
+      ],
+      "tags": {
+        "displayName": "[parameters('vm2name')]"
+      },
+      "properties": {
+        "hardwareProfile": {
+          "vmSize": "Standard_B2s"
+        },
+        "osProfile": {
+          "computerName": "[parameters('vm2name')]",
+          "adminUsername": "[parameters('vm2usrnm')]",
+          "adminPassword": "[parameters('vm2pswrd')]",
+          "windowsConfiguration": {
+            "provisionVMAgent": true,
+            "enableAutomaticUpdates": true
+          }
+        },
+        "storageProfile": {
+          "imageReference": {
+            "publisher": "MicrosoftWindowsServer",
+            "offer": "WindowsServer",
+            "sku": "2019-Datacenter",
+            "version": "latest"
+          },
+          "osDisk": {
+            "name": "[parameters('vm2osdiskname')]",
+            "caching": "ReadWrite",
+            "createOption": "FromImage"
+          }
+        },
+        "networkProfile": {
+          "networkInterfaces": [
+            {
+              "id": "[resourceId('Microsoft.Network/networkInterfaces', parameters('vm2-nic'))]"
+            }
+          ]
+        },
+        "diagnosticsProfile": {
+          "bootDiagnostics": {
+            "enabled": true,
+            "storageUri": "[reference(resourceId('Microsoft.Storage/storageAccounts/', parameters('vm2strgname'))).primaryEndpoints.blob]"
+          }
+        }
+      }
+    },
+
+/*
+    {
+      "type": "Microsoft.Network/publicIPAddresses",
+      "apiVersion": "2020-11-01",
+      "name": "[parameters('firewallpipname')]",
+      "location": "[resourceGroup().location]",
+      "sku": {
+        "name": "Standard",
+        "tier": "Regional"
+      },
+      "properties": {
+        "ipAddress": "51.124.67.70",
+        "publicIPAddressVersion": "IPv4",
+        "publicIPAllocationMethod": "Static",
+        "idleTimeoutInMinutes": 4,
+        "ipTags": []
+      }
+    },
+
+    {
+      "type": "Microsoft.Network/firewallPolicies",
+      "apiVersion": "2020-11-01",
+      "name": "[parameters('firewallPolicyname')]",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "sku": {
+          "tier": "Standard"
+        },
+        "threatIntelMode": "Alert"
+      }
+    },
+
+    {
+      "type": "Microsoft.Network/azureFirewalls",
+      "apiVersion": "2020-11-01",
+      "name": "[parameters('hubfirewallname')]",
+      "location": "[resourcegroup().location]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/publicIPAddresses', parameters('firewallpipname'))]",
+        "[resourceId('Microsoft.Network/firewallPolicies', parameters('firewallPolicyname'))]"
+      ],
+      "properties": {
+        "sku": {
+          "name": "AZFW_VNet",
+          "tier": "Standard"
+        },
+        "threatIntelMode": "Alert",
+        "additionalProperties": {},
+        "ipConfigurations": [
+          {
+            "name": "ipConfigName",
+            "properties": {
+              "publicIPAddress": {
+                "id": "[resourceId('Microsoft.Network/publicIPAddresses', parameters('firewallpipname'))]"
+              },
+              "subnet": {
+                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('hubvnetname'), 'AzureFirewallSubnet')]"
+              }
+            }
+          }
+        ],
+        "networkRuleCollections": [],
+        "applicationRuleCollections": [],
+        "natRuleCollections": [],
+        "firewallPolicy": {
+          "id": "[resourceId('Microsoft.Network/firewallPolicies', parameters('firewallPolicyname'))]"
+        }
+      }
+    },
+
+    {
+      "type": "Microsoft.Network/firewallPolicies/ruleCollectionGroups",
+      "apiVersion": "2020-11-01",
+      "name": "[concat(parameters('firewallPolicyname'), '/DefaultApplicationRuleCollectionGroup')]",
+      "location": "westeurope",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/firewallPolicies', parameters('firewallPolicyname'))]"
+      ],
+      "properties": {
+        "priority": 300,
+        "ruleCollections": [
+          {
+            "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
+            "action": {
+              "type": "Allow"
+            },
+            "rules": [
+              {
+                "ruleType": "ApplicationRule",
+                "name": "AllowAzurePortal",
+                "protocols": [
+                  {
+                    "protocolType": "Https",
+                    "port": 443
+                  }
+                ],
+                "fqdnTags": [],
+                "webCategories": [],
+                "targetFqdns": ["portal.azure.com"],
+                "targetUrls": [],
+                "terminateTLS": false,
+                "sourceAddresses": ["*"],
+                "destinationAddresses": [],
+                "sourceIpGroups": []
+              },
+              {
+                "ruleType": "ApplicationRule",
+                "name": "AllowMSSites",
+                "protocols": [
+                  {
+                    "protocolType": "Https",
+                    "port": 443
+                  }
+                ],
+                "fqdnTags": [],
+                "webCategories": [],
+                "targetFqdns": ["*.microsoft.com"],
+                "targetUrls": [],
+                "terminateTLS": false,
+                "sourceAddresses": ["*"],
+                "destinationAddresses": [],
+                "sourceIpGroups": []
+              },
+              {
+                "ruleType": "ApplicationRule",
+                "name": "AllowAll",
+                "protocols": [
+                  {
+                    "protocolType": "Https",
+                    "port": 443
+                  }
+                ],
+                "fqdnTags": [],
+                "webCategories": [],
+                "targetFqdns": ["*"],
+                "targetUrls": [],
+                "terminateTLS": false,
+                "sourceAddresses": ["*"],
+                "destinationAddresses": [],
+                "sourceIpGroups": []
+              }
+            ],
+            "name": "URLWhitelist",
+            "priority": 101
+          }
+        ]
+      }
+    },
+
+    {
+      "name": "sqlServer1",
+      "type": "Microsoft.Sql/servers",
+      "apiVersion": "2014-04-01",
+      "location": "[resourceGroup().location]",
+      "tags": {
+        "displayName": "sqlServer1"
+      },
+      "properties": {
+        "administratorLogin": "adminUsername",
+        "administratorLoginPassword": "adminPassword"
+      },
+      "resources": [
+        {
+          "type": "firewallRules",
+          "apiVersion": "2014-04-01",
+          "dependsOn": [
+            "[resourceId('Microsoft.Sql/servers', 'sqlServer1')]"
+          ],
+          "location": "[resourceGroup().location]",
+          "name": "AllowAllWindowsAzureIps",
+          "properties": {
+            "startIpAddress": "0.0.0.0",
+            "endIpAddress": "0.0.0.0"
+          }
+        }
+      ]
+    },
+    */
+    {
+      "type": "Microsoft.DevTestLab/schedules",
+      "name": "[concat('shutdown-computevm-', parameters('vm1name'))]",
+      "apiVersion": "2018-09-15",
+      "location": "[resourceGroup().location]",
+      "dependsOn": [
+        "[concat('Microsoft.Compute/virtualMachines/', parameters('vm1name'))]"
+      ],
+      "properties": {
+        "status": "Enabled",
+        "taskType": "ComputeVmShutdownTask",
+        "dailyRecurrence": {
+          "time": "1900"
+        },
+        "timeZoneId": "Greenwich Standard Time",
+        "notificationSettings": {
+          "status": "Disabled",
+          "timeInMinutes": 15
+        },
+        "targetResourceId": "[resourceId('Microsoft.Compute/virtualMachines',parameters('vm1name'))]"
+      }
+    },
+    {
+      "type": "Microsoft.DevTestLab/schedules",
+      "name": "[concat('shutdown-computevm-', parameters('vm2name'))]",
+      "apiVersion": "2018-09-15",
+      "location": "[resourceGroup().location]",
+      "dependsOn": [
+        "[concat('Microsoft.Compute/virtualMachines/', parameters('vm2name'))]"
+      ],
+      "properties": {
+        "status": "Enabled",
+        "taskType": "ComputeVmShutdownTask",
+        "dailyRecurrence": {
+          "time": "1900"
+        },
+        "timeZoneId": "Greenwich Standard Time",
+        "notificationSettings": {
+          "status": "Disabled",
+          "timeInMinutes": 15
+        },
+        "targetResourceId": "[resourceId('Microsoft.Compute/virtualMachines',parameters('vm2name'))]"
+      }
+    }
+  ],
+  "outputs": {}
+}

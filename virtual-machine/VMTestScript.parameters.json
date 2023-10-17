@@ -1,0 +1,80 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "location": {
+            "value": "northeurope"
+        },
+        "tstvnetname": {
+            "value": "jsneutstvnet" 
+        },
+        "vmsubnetname": {
+            "value": "jsneuvmsnet" 
+        },
+        "strgsubnetname": {
+            "value": "jsneustrgsnet"
+        },
+        "sasubnetaddressspace": {
+            "value": "10.0.2.0/24"
+        },
+        "vmsubnetaddressspace": {
+            "value": "10.0.1.0/24" 
+        },
+        "strgaccname": {
+            "value": "jsneusavm01" 
+        },
+        "strgacckind": {
+            "value": "StorageV2" 
+        },
+        "strgaccsku": {
+            "value": "Standard_LRS" 
+        },
+        "strgaccskutier": {
+            "value": "Standard" 
+        },
+        "filesharename": {
+            "value": "jsneufs" 
+        },
+        "shareQuota": {
+            "value": "5120" 
+        },
+        "pepname": {
+            "value": "pep-sa-jsneutst" 
+        },
+        "vm1-pip": {
+            "value": "vm1sapip" 
+        },
+        "vm1-privip": {
+            "value": "10.0.1.5"
+        },
+        "vm1-nsg": {
+            "value": "vm1sansg" 
+        },
+        "vm1-nic": {
+            "value": "vm1sanic" 
+        },
+        "vm1name": {
+            "value": "jsneu-strgvm01" 
+        },
+        "vm1usrnm": {
+            "reference": {
+                "keyVault": {
+                "id": "/subscriptions/8f54c9d1-875d-4c30-b468-ad3690c17068/resourceGroups/rg-neu-JosuedaSilva/providers/Microsoft.KeyVault/vaults/jskv-neu001"
+                },
+                "secretName": "vmuser"
+            }
+        },
+        "vm1pswrd": {
+            "reference": {
+                "keyVault": {
+                "id": "/subscriptions/8f54c9d1-875d-4c30-b468-ad3690c17068/resourceGroups/rg-neu-JosuedaSilva/providers/Microsoft.KeyVault/vaults/jskv-neu001"
+                },
+                "secretName": "vmakp"
+            }
+        },
+        "vm1osdiskname": {
+            "value": "jsneu-vm1saosdisk" 
+        }
+
+    }
+}

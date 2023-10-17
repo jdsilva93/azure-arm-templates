@@ -1,0 +1,100 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "vm1vnet": {
+            "value": "jsneu-strgbckend-dev-vnet" 
+        },
+        "vm1subnet": {
+            "value": "vm1strgsubnet"
+        },
+        "vm1strgname": {
+            "value": "jsneustrgaccsavm01" 
+        },
+        "vm1-pip": {
+            "value": "vm1sapip" 
+        },
+        "vm1-nsg": {
+            "value": "vm1sansg" 
+        },
+        "vm1-nic": {
+            "value": "vm1sanic" 
+        },
+        "vm1name": {
+            "value": "jsneu-strgvm01" 
+        },
+        "vm1usrnm": {
+            "reference": {
+                "keyVault": {
+                "id": "/subscriptions/8f54c9d1-875d-4c30-b468-ad3690c17068/resourceGroups/rg-neu-JosuedaSilva/providers/Microsoft.KeyVault/vaults/jskv-neu001"
+                },
+                "secretName": "vmuser"
+            }
+        },
+        "vm1pswrd": {
+            "reference": {
+                "keyVault": {
+                "id": "/subscriptions/8f54c9d1-875d-4c30-b468-ad3690c17068/resourceGroups/rg-neu-JosuedaSilva/providers/Microsoft.KeyVault/vaults/jskv-neu001"
+                },
+                "secretName": "vmakp"
+            }
+        },
+        "vm1osdiskname": {
+            "value": "jsneu-vm1saosdisk" 
+        },
+        "vm2vnet": {
+            "value": "jsneu-frntendwa-dev-vnet" 
+        },
+        "vm2subnet": {
+            "value": "vm2wasubnet"
+        },
+        "vm2strgname": {
+            "value": "jsneustrgaccwavm02" 
+        },
+        "vm2-pip": {
+            "value": "vm2wapip" 
+        },
+        "vm2-nsg": {
+            "value": "vm2wansg" 
+        },
+        "vm2-nic": {
+            "value": "vm2wanic" 
+        },
+        "vm2name": {
+            "value": "jsneu-webvm02" 
+        },
+        "vm2usrnm": {
+            "reference": {
+                "keyVault": {
+                "id": "/subscriptions/8f54c9d1-875d-4c30-b468-ad3690c17068/resourceGroups/rg-neu-JosuedaSilva/providers/Microsoft.KeyVault/vaults/jskv-neu001"
+                },
+                "secretName": "vmuser"
+            }
+        },
+        "vm2pswrd": {
+            "reference": {
+                "keyVault": {
+                "id": "/subscriptions/8f54c9d1-875d-4c30-b468-ad3690c17068/resourceGroups/rg-neu-JosuedaSilva/providers/Microsoft.KeyVault/vaults/jskv-neu001"
+                },
+                "secretName": "vmakp"
+            }
+        },
+        "vm2osdiskname": {
+            "value": "jsneu-vm2waosdisk" 
+        },
+        "hubfirewallname": {
+            "value": "hubvnetfirewall" 
+        },
+        "firewallpipname": {
+            "value": "hubfirewallpublicIP"
+        },
+        "firewallPolicyname": {
+            "value": "hubfirewallPolicy"
+        },
+        "hubvnetname": {
+            "value": "jsneu-hub-dev-vnet"
+        }
+
+            
+    }
+}

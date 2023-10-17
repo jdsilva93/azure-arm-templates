@@ -1,0 +1,43 @@
+{
+  "mode": "Indexed",
+  "policyRule": {
+    "if": {
+      "allOf": [
+        {
+          "field": "type",
+          "equals": "Microsoft.Network/applicationGateways"
+        },
+        {
+          "anyOf": [
+            {
+              "field": "Microsoft.Network/applicationGateways/sslPolicy.minProtocolVersion",
+              "notEquals": "TLSv1_2"
+            },
+            {
+              "field": "Microsoft.Network/applicationGateways/sslPolicy",
+              "exists": "false"
+            }
+          ]
+        }
+      ]
+    },
+    "then": {
+      "effect": "[parameters('effect')]"
+    }
+  },
+  "parameters": {
+    "effect": {
+      "type": "String",
+      "metadata": {
+        "displayName": "Effect",
+        "description": "Enable or disable the execution of the policy"
+      },
+      "allowedValues": [
+        "Audit",
+        "Disabled",
+        "Deny"
+      ],
+      "defaultValue": "Audit"
+    }
+  }
+}

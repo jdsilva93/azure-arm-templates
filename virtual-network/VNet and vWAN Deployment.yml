@@ -1,0 +1,134 @@
+trigger:
+- none
+
+pool:
+  vmImage: ubuntu-latest
+
+variables:
+- name: subscriptionId
+  value: 8f54c9d1-875d-4c30-b468-ad3690c17068
+- name: location
+  value: West Europe
+- name: drlocation
+  value: North Europe
+
+
+steps:
+
+#coreVM deployment
+- task: AzureResourceManagerTemplateDeployment@3
+  inputs:
+    deploymentScope: 'Resource Group'
+    azureResourceManagerConnection: 'MBG EMEA'
+    subscriptionId: $(subscriptionId)
+    action: 'Create Or Update Resource Group'
+    resourceGroupName: rg-weu-core-g3
+    location: $(location)
+    templateLocation: 'Linked artifact'
+    csmFile: '$(System.DefaultWorkingDirectory)/Challenge 2-Group 3/Core Environment/corevmdeploy.json'
+    csmParametersFile: '$(System.DefaultWorkingDirectory)/Challenge 2-Group 3/Core Environment/corevmdeploy.parameters.json'
+    deploymentMode: 'Incremental'
+
+#dr coreVM deployment
+- task: AzureResourceManagerTemplateDeployment@3
+  inputs:
+    deploymentScope: 'Resource Group'
+    azureResourceManagerConnection: 'MBG EMEA'
+    subscriptionId: $(subscriptionId)
+    action: 'Create Or Update Resource Group'
+    resourceGroupName: rg-neu-core-dr-g3
+    location: $(drlocation)
+    templateLocation: 'Linked artifact'
+    csmFile: '$(System.DefaultWorkingDirectory)/Challenge 2-Group 3/Core Environment/drcorevmdeploy.json'
+    csmParametersFile: '$(System.DefaultWorkingDirectory)/Challenge 2-Group 3/Core Environment/drcorevmdeploy.parameters.json'
+    deploymentMode: 'Incremental'
+
+# #prod deployment
+# - task: AzureResourceManagerTemplateDeployment@3
+#   inputs:
+#     deploymentScope: 'Resource Group'
+#     azureResourceManagerConnection: 'MBG EMEA'
+#     subscriptionId: $(subscriptionId)
+#     action: 'Create Or Update Resource Group'
+#     resourceGroupName: rg-weu-prod-g3
+#     location: $(location)
+#     templateLocation: 'Linked artifact'
+#     csmFile: '$(System.DefaultWorkingDirectory)/Challenge 2-Group 3/Prod Environment/proddeploy.json'
+#     csmParametersFile: '$(System.DefaultWorkingDirectory)/Challenge 2-Group 3/Prod Environment/proddeploy.parameters.json'
+#     deploymentMode: 'Incremental'
+
+# #dr prod deployment
+# - task: AzureResourceManagerTemplateDeployment@3
+#   inputs:
+#     deploymentScope: 'Resource Group'
+#     azureResourceManagerConnection: 'MBG EMEA'
+#     subscriptionId: $(subscriptionId)
+#     action: 'Create Or Update Resource Group'
+#     resourceGroupName: rg-neu-prod-dr-g3
+#     location: $(drlocation)
+#     templateLocation: 'Linked artifact'
+#     csmFile: '$(System.DefaultWorkingDirectory)/Challenge 2-Group 3/Prod Environment/drproddeploy.json'
+#     csmParametersFile: '$(System.DefaultWorkingDirectory)/Challenge 2-Group 3/Prod Environment/drproddeploy.parameters.json'
+#     deploymentMode: 'Incremental'
+
+# #dev deployment
+# - task: AzureResourceManagerTemplateDeployment@3
+#   inputs:
+#     deploymentScope: 'Resource Group'
+#     azureResourceManagerConnection: 'MBG EMEA'
+#     subscriptionId: $(subscriptionId)
+#     action: 'Create Or Update Resource Group'
+#     resourceGroupName: rg-weu-dev-g3
+#     location: $(location)
+#     templateLocation: 'Linked artifact'
+#     csmFile: '$(System.DefaultWorkingDirectory)/Challenge 2-Group 3/Dev Environment/devdeploy.json'
+#     csmParametersFile: '$(System.DefaultWorkingDirectory)/Challenge 2-Group 3/Dev Environment/devdeploy.parameters.json'
+#     deploymentMode: 'Incremental'
+
+# #dr dev deployment
+# - task: AzureResourceManagerTemplateDeployment@3
+#   inputs:
+#     deploymentScope: 'Resource Group'
+#     azureResourceManagerConnection: 'MBG EMEA'
+#     subscriptionId: $(subscriptionId)
+#     action: 'Create Or Update Resource Group'
+#     resourceGroupName: rg-neu-dev-dr-g3
+#     location: $(drlocation)
+#     templateLocation: 'Linked artifact'
+#     csmFile: '$(System.DefaultWorkingDirectory)/Challenge 2-Group 3/Dev Environment/drdevdeploy.json'
+#     csmParametersFile: '$(System.DefaultWorkingDirectory)/Challenge 2-Group 3/Dev Environment/drdevdeploy.parameters.json'
+#     deploymentMode: 'Incremental'
+
+# #test deployment
+# - task: AzureResourceManagerTemplateDeployment@3
+#   inputs:
+#     deploymentScope: 'Resource Group'
+#     azureResourceManagerConnection: 'MBG EMEA'
+#     subscriptionId: $(subscriptionId)
+#     action: 'Create Or Update Resource Group'
+#     resourceGroupName: rg-weu-test-g3
+#     location: $(location)
+#     templateLocation: 'Linked artifact'
+#     csmFile: '$(System.DefaultWorkingDirectory)/Challenge 2-Group 3/Test Environment/testdeploy.json'
+#     csmParametersFile: '$(System.DefaultWorkingDirectory)/Challenge 2-Group 3/Test Environment/testdeploy.parameters.json'
+#     deploymentMode: 'Incremental'
+
+# #dr test deployment
+# - task: AzureResourceManagerTemplateDeployment@3
+#   inputs:
+#     deploymentScope: 'Resource Group'
+#     azureResourceManagerConnection: 'MBG EMEA'
+#     subscriptionId: $(subscriptionId)
+#     action: 'Create Or Update Resource Group'
+#     resourceGroupName: rg-neu-test-dr-g3
+#     location: $(drlocation)
+#     templateLocation: 'Linked artifact'
+#     csmFile: '$(System.DefaultWorkingDirectory)/Challenge 2-Group 3/Test Environment/drtestdeploy.json'
+#     csmParametersFile: '$(System.DefaultWorkingDirectory)/Challenge 2-Group 3/Test Environment/drtestdeploy.parameters.json'
+#     deploymentMode: 'Incremental'
+
+
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+

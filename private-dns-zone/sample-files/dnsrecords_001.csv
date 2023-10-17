@@ -1,0 +1,9 @@
+#TYPE Microsoft.Azure.Commands.PrivateDns.Models.ARecord
+"Id","Name","ZoneName","ResourceGroupName","Ttl","RecordType","IsAutoRegistered","Ipv4Address"
+"/subscriptions/34ddcb84-9987-4faf-9960-e5742853cb94/resourceGroups/rg-uks-josuedasilva/providers/Microsoft.Network/privateDnsZones/privatelink.josue.test01.net/A/@","@","privatelink.josue.test01.net","rg-uks-josuedasilva","3600","A","False","1.2.3.4"
+"/subscriptions/34ddcb84-9987-4faf-9960-e5742853cb94/resourceGroups/rg-uks-josuedasilva/providers/Microsoft.Network/privateDnsZones/privatelink.josue.test01.net/A/@","@","privatelink.josue.test01.net","rg-uks-josuedasilva","3600","A","False","5.6.7.8"
+"/subscriptions/34ddcb84-9987-4faf-9960-e5742853cb94/resourceGroups/rg-uks-josuedasilva/providers/Microsoft.Network/privateDnsZones/privatelink.josue.test01.net/SOA/@","@","privatelink.josue.test01.net","rg-uks-josuedasilva","3600","SOA","False",
+"/subscriptions/34ddcb84-9987-4faf-9960-e5742853cb94/resourceGroups/rg-uks-josuedasilva/providers/Microsoft.Network/privateDnsZones/privatelink.josue.test02.net/CNAME/*","*","privatelink.josue.test02.net","rg-uks-josuedasilva","3600","CNAME","False",
+"/subscriptions/34ddcb84-9987-4faf-9960-e5742853cb94/resourceGroups/rg-uks-josuedasilva/providers/Microsoft.Network/privateDnsZones/privatelink.josue.test02.net/SOA/@","@","privatelink.josue.test02.net","rg-uks-josuedasilva","3600","SOA","False",
+"/subscriptions/34ddcb84-9987-4faf-9960-e5742853cb94/resourceGroups/rg-uks-josuedasilva/providers/Microsoft.Network/privateDnsZones/privatelink.josue.test03.net/SOA/@","@","privatelink.josue.test03.net","rg-uks-josuedasilva","3600","SOA","False",
+"/subscriptions/34ddcb84-9987-4faf-9960-e5742853cb94/resourceGroups/rg-uks-josuedasilva/providers/Microsoft.Network/privateDnsZones/privatelink.josue.test03.net/TXT/@","@","privatelink.josue.test03.net","rg-uks-josuedasilva","3600","TXT","False",

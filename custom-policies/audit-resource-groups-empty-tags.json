@@ -1,0 +1,57 @@
+{
+  "mode": "All",
+  "policyRule": {
+    "if": {
+      "allOf": [
+        {
+          "field": "type",
+          "equals": "Microsoft.Resources/subscriptions/resourceGroups"
+        },
+        {
+          "field": "[concat('tags[', parameters('tagName'), ']')]",
+          "exists": "true"
+        },
+        {
+          "anyOf": [
+            {
+              "field": "[concat('tags[', parameters('tagName'), ']')]",
+              "equals": ""
+            },
+            {
+              "field": "[concat('tags[', parameters('tagName'), ']')]",
+              "equals": "-"
+            },
+            {
+              "field": "[concat('tags[', parameters('tagName'), ']')]",
+              "equals": "TBC"
+            },
+            {
+              "field": "[concat('tags[', parameters('tagName'), ']')]",
+              "equals": "TBD"
+            },
+            {
+              "field": "[concat('tags[', parameters('tagName'), ']')]",
+              "equals": "NA"
+            },
+            {
+              "field": "[concat('tags[', parameters('tagName'), ']')]",
+              "equals": "N/A"
+            }
+          ]
+        }
+      ]
+    },
+    "then": {
+      "effect": "audit"
+    }
+  },
+  "parameters": {
+    "tagName": {
+      "type": "String",
+      "metadata": {
+        "displayName": "Tag Name",
+        "description": "Name of the tag."
+      }
+    }
+  }
+}
